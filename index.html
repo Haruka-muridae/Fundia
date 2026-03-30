@@ -1057,7 +1057,7 @@
     GASをデプロイした後、発行されたURLをここに貼り付ける。
     例: 'https://script.google.com/macros/s/XXXXXX/exec'
   */
-  const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwxXfXjorHqNNAf0aaedkILBZMRcTFUtpPQD8BsNhbYFDfIIwi4i9F4JDjZWsxXN-sybg/exec';
+  const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbz91XXjZaRDkKDPKaxMXvUDnmQqOjrmb_DbJKsNP4K1Yqr8QZcKmvRG7cOM3DxFYPSeTA/exec';
 
   /* ============================================================
      入力値サニタイズ
@@ -1139,11 +1139,14 @@
     btn.textContent = '送信中...';
 
     /* --- GASへPOST送信 ---
-       【通信仕様】
-       - メソッド: POST のみ使用（GETはURLにデータが露出するため禁止）
-       - Content-Type: application/json
-       - tokenを含めてGAS側で検証できるようにする
-       - originを送信してGAS側でリクエスト元を確認できるようにする
+       【GASのCORS制約について】
+       GASはプリフライトリクエスト（OPTIONS）にCORSヘッダーを返せない。
+       そのため Content-Type: application/json だとCORSエラーになる。
+       解決策：
+       - mode: 'no-cors' を使う
+       - Content-Type を text/plain にする（プリフライト不要になる）
+       - GAS側でe.postData.contentsからJSONをパースする
+       ※ no-corsではレスポンスが読めないため、送信完了は楽観的に判断する
     */
     try {
       const payload = {
@@ -1158,15 +1161,14 @@
         timestamp: new Date().toISOString()
       };
 
-      const res = await fetch(GAS_ENDPOINT, {
+      await fetch(GAS_ENDPOINT, {
         method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
+        mode:    'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
         body:    JSON.stringify(payload)
       });
 
-      if (!res.ok) throw new Error('Network error');
-
-      /* --- 送信成功 --- */
+      /* --- 送信成功（no-corsのためレスポンスは読めないが送信は完了） --- */
       lastSubmitTime = Date.now();
       document.getElementById('form-body').style.display = 'none';
       document.getElementById('form-success').style.display = 'block';
