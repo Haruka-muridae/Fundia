@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fundia Online — 成長を実感できないなら、それは授業ではない。</title>
+<!--
+  【CSP: Content Security Policy】
+  XSS攻撃を防ぐため、読み込み可能なリソースの出所を制限する。
+  - default-src 'self': 基本的に自サイトのリソースのみ許可
+  - script-src 'self' 'unsafe-inline': インラインscriptを許可（GAS fetch使用のため）
+  - style-src: Google Fontsのスタイルを許可
+  - font-src: Google Fontsのフォントファイルを許可
+  - connect-src: GASエンドポイントへのfetchを許可
+  ※ GitHub Pages で <meta> CSP は完全ではないが、補助的対策として有効。
+-->
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' 'unsafe-inline';
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+  font-src https://fonts.gstatic.com;
+  connect-src https://script.google.com;
+  img-src 'self' data:;
+">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600&family=DM+Serif+Display:ital@0;1&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:        #1a1916;
+    --paper:      #f8f6f1;
+    --stone:      #9a9690;
+    --accent:     #2d5a3d;
+    --accent-mid: #3d7a55;
+    --light:      #eceae4;
+    --rule:       #dedad3;
+    --campaign:   #b84c2b;
+    --serif-jp:   'Shippori Mincho', serif;
+    --serif-en:   'DM Serif Display', serif;
+    --sans:       'Jost', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif-jp);
+    line-height: 1.9;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.3rem 5rem;
+    background: rgba(248,246,241,.92);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .logo {
+    font-family: var(--serif-en);
+    font-size: 1.3rem;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: .04em;
+  }
+  .logo em { color: var(--accent); font-style: italic; }
+  nav ul { list-style: none; display: flex; gap: 2.4rem; }
+  nav ul a {
+    font-family: var(--sans);
+    font-size: .75rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--stone);
+    text-decoration: none;
+    transition: color .2s;
+  }
+  nav ul a:hover { color: var(--ink); }
+  .nav-cta {
+    font-family: var(--sans);
+    font-size: .75rem;
+    font-weight: 500;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--paper);
+    background: var(--ink);
+    padding: .55rem 1.5rem;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: background .2s;
+  }
+  .nav-cta:hover { background: var(--accent); }
+
+  /* ── CAMPAIGN RIBBON ── */
+  .campaign-ribbon {
+    background: var(--campaign);
+    color: #fff;
+    text-align: center;
+    padding: 1.2rem 1rem;
+    font-family: var(--sans);
+    font-size: 1.05rem;
+    font-weight: 500;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-top: 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .campaign-ribbon::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      -45deg, transparent, transparent 8px,
+      rgba(255,255,255,.055) 8px, rgba(255,255,255,.055) 16px
+    );
+  }
+  .campaign-ribbon span { position: relative; }
+  .campaign-ribbon strong { font-weight: 600; margin: 0 .4rem; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: calc(100vh - 64px - 42px);
+    display: grid;
+    grid-template-columns: 55% 45%;
+    align-items: center;
+  }
+  .hero-left {
+    padding: 6rem 4rem 6rem 6rem;
+    position: relative;
+  }
+  .hero-left::after {
+    content: '';
+    position: absolute; right: 0; top: 12%; bottom: 12%;
+    width: 1px; background: var(--rule);
+  }
+  .eyebrow {
+    font-family: var(--sans);
+    font-size: .7rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 2rem;
+    opacity: 0; animation: fadeUp .7s .2s forwards;
+  }
+  .hero-title {
+    font-family: var(--serif-jp);
+    font-size: clamp(2rem, 3.6vw, 3.2rem);
+    font-weight: 500;
+    line-height: 1.55;
+    letter-spacing: .04em;
+    margin-bottom: 2.2rem;
+    opacity: 0; animation: fadeUp .7s .4s forwards;
+  }
+  .hero-title em {
+    font-style: normal;
+    display: block;
+    color: var(--accent);
+    font-size: .78em;
+    margin-top: .8rem;
+    letter-spacing: .06em;
+  }
+  .hero-sub {
+    font-size: .95rem;
+    color: var(--stone);
+    line-height: 2.1;
+    max-width: 30rem;
+    margin-bottom: 3rem;
+    opacity: 0; animation: fadeUp .7s .6s forwards;
+  }
+  .hero-actions {
+    display: flex; gap: 1.2rem; align-items: center;
+    opacity: 0; animation: fadeUp .7s .8s forwards;
+  }
+  .btn-primary {
+    font-family: var(--sans);
+    font-size: .8rem;
+    font-weight: 500;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--paper);
+    background: var(--ink);
+    padding: .95rem 2.4rem;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: background .25s, transform .2s;
+  }
+  .btn-primary:hover { background: var(--accent); transform: translateY(-2px); }
+  .btn-ghost {
+    font-family: var(--sans);
+    font-size: .8rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--stone);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 2px;
+    transition: color .2s, border-color .2s;
+  }
+  .btn-ghost:hover { color: var(--ink); border-color: var(--stone); }
+
+  .hero-right {
+    padding: 4rem;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; animation: fadeIn 1s .6s forwards;
+  }
+  .hero-card {
+    width: 100%; max-width: 340px;
+    background: var(--ink);
+    border-radius: 4px;
+    padding: 2.5rem;
+    color: var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-card::before {
+    content: 'F';
+    font-family: var(--serif-en);
+    font-style: italic;
+    font-size: 14rem;
+    color: rgba(255,255,255,.03);
+    position: absolute;
+    right: -2rem; bottom: -3rem;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .card-label {
+    font-family: var(--sans);
+    font-size: .62rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: #7aab8a;
+    margin-bottom: 1.5rem;
+  }
+  .card-quote {
+    font-family: var(--serif-jp);
+    font-size: 1.05rem;
+    font-weight: 500;
+    line-height: 1.8;
+    letter-spacing: .04em;
+    margin-bottom: 2rem;
+  }
+  .card-divider { height: 1px; background: #2e2d2a; margin-bottom: 1.5rem; }
+  .card-pillars { display: flex; flex-direction: column; gap: .9rem; }
+  .card-pillar { display: flex; align-items: center; gap: .9rem; }
+  .pillar-dot {
+    width: 6px; height: 6px;
+    background: var(--accent-mid);
+    border-radius: 50%; flex-shrink: 0;
+  }
+  .pillar-text {
+    font-family: var(--sans);
+    font-size: .78rem;
+    letter-spacing: .06em;
+    color: #9b9690;
+  }
+
+  /* ── SECTION COMMON ── */
+  section { padding: 7rem 6rem; }
+  .section-label {
+    font-family: var(--sans);
+    font-size: .68rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: var(--serif-jp);
+    font-size: clamp(1.7rem, 2.8vw, 2.4rem);
+    font-weight: 500;
+    line-height: 1.55;
+    letter-spacing: .04em;
+    margin-bottom: 1.4rem;
+  }
+  .section-lead {
+    font-size: .92rem;
+    color: var(--stone);
+    line-height: 2.1;
+    max-width: 34rem;
+  }
+
+  /* ── CONCEPT ── */
+  .concept {
+    background: var(--paper);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+  .concept-visual { position: relative; }
+  .concept-block {
+    background: var(--light);
+    border-radius: 3px;
+    padding: 3rem;
+    border: 1px solid var(--rule);
+  }
+  .concept-block-title {
+    font-family: var(--serif-en);
+    font-style: italic;
+    font-size: 2.2rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    display: block;
+  }
+  .concept-block p {
+    font-size: .9rem;
+    color: var(--stone);
+    line-height: 2.1;
+  }
+  .concept-float {
+    position: absolute;
+    bottom: -1.5rem; right: -1.5rem;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 1.5rem 2rem;
+    border-radius: 3px;
+    font-family: var(--sans);
+    font-size: .72rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    line-height: 1.8;
+  }
+  .concept-float strong {
+    display: block;
+    font-family: var(--serif-en);
+    font-style: italic;
+    font-size: 1.6rem;
+    color: var(--accent-mid);
+    margin-bottom: .2rem;
+    font-weight: 400;
+  }
+
+  /* ── FEATURES ── */
+  .features { background: var(--ink); }
+  .features .section-label { color: #7aab8a; }
+  .features .section-title { color: var(--paper); }
+  .features .section-lead { color: #706d68; }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin-top: 4rem;
+    border: 1px solid #252422;
+  }
+  .feature-card {
+    padding: 3rem 2.5rem;
+    border-right: 1px solid #252422;
+    transition: background .25s;
+  }
+  .feature-card:last-child { border-right: none; }
+  .feature-card:hover { background: #1f1e1c; }
+  .feature-num {
+    font-family: var(--serif-en);
+    font-style: italic;
+    font-size: 2.8rem;
+    color: #6a6760;
+    -webkit-text-stroke: .5px rgba(255,255,255,.18);
+    text-stroke: .5px rgba(255,255,255,.18);
+    line-height: 1;
+    margin-bottom: 1.5rem;
+    display: block;
+    transition: color .25s;
+  }
+  .feature-card:hover .feature-num { color: var(--accent); }
+  .feature-title {
+    font-family: var(--serif-jp);
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--paper);
+    letter-spacing: .04em;
+    margin-bottom: .8rem;
+  }
+  .feature-body { font-size: .86rem; color: #e8e5e0; line-height: 2.1; }
+
+  /* ── PLANS ── */
+  .plans { background: var(--paper); }
+  .plans-note {
+    font-family: var(--sans);
+    font-size: .72rem;
+    color: var(--stone);
+    letter-spacing: .08em;
+    margin-top: .8rem;
+  }
+  .plans-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 4rem;
+    align-items: start;
+  }
+  .plan-card {
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 2.5rem 2rem;
+    position: relative;
+    transition: transform .25s, box-shadow .25s;
+  }
+  .plan-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,.07); }
+  .plan-card.featured {
+    border-color: var(--accent);
+    background: var(--ink);
+    color: var(--paper);
+    padding-top: 3.8rem;
+  }
+  .plan-card.premium {
+    border-color: #c8b89a;
+    padding-top: 3.8rem;
+  }
+  .campaign-badge {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    background: var(--campaign);
+    color: #fff;
+    font-family: var(--sans);
+    font-size: .66rem;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: .45rem .5rem;
+    border-radius: 3px 3px 0 0;
+  }
+  .campaign-sub {
+    display: block;
+    font-size: .58rem;
+    font-weight: 400;
+    letter-spacing: .1em;
+    opacity: .85;
+    margin-top: .15rem;
+  }
+  .plan-name {
+    font-family: var(--serif-jp);
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: .06em;
+    margin-bottom: .8rem;
+  }
+  .price-original {
+    font-family: var(--serif-en);
+    font-size: 1.4rem;
+    font-style: italic;
+    color: var(--stone);
+    text-decoration: line-through;
+    text-decoration-color: var(--campaign);
+    text-decoration-thickness: 2px;
+    display: block;
+    line-height: 1.3;
+  }
+  .plan-card.featured .price-original { color: #555250; }
+  .price-campaign {
+    font-family: var(--serif-en);
+    font-size: 2.6rem;
+    line-height: 1.1;
+    margin-top: .3rem;
+    display: block;
+  }
+  .price-suffix {
+    font-family: var(--sans);
+    font-size: .7rem;
+    font-weight: 300;
+    color: var(--stone);
+    letter-spacing: .08em;
+  }
+  .plan-card.featured .price-suffix { color: #706d68; }
+  .plan-price-plain {
+    font-family: var(--serif-en);
+    font-size: 2.6rem;
+    line-height: 1.1;
+    display: block;
+  }
+  .plan-price-note {
+    font-family: var(--sans);
+    font-size: .68rem;
+    color: var(--stone);
+    letter-spacing: .08em;
+    margin-top: .3rem;
+    margin-bottom: 1.2rem;
+  }
+  .plan-card.featured .plan-price-note { color: #9b9690; font-size: .62rem; letter-spacing: .06em; }
+  .plan-divider { height: 1px; background: var(--rule); margin: 1.5rem 0; }
+  .plan-card.featured .plan-divider { background: #2e2d2a; }
+  .plan-features {
+    list-style: none;
+    font-size: .86rem;
+    line-height: 2.3;
+    color: var(--stone);
+  }
+  .plan-card.featured .plan-features { color: #f5f5f5; }
+  .plan-features li { display: flex; align-items: baseline; gap: .6rem; }
+  .plan-features li::before {
+    content: '—';
+    color: var(--accent-mid);
+    font-family: var(--sans);
+    flex-shrink: 0;
+  }
+  .plan-btn {
+    display: block;
+    text-align: center;
+    margin-top: 2rem;
+    font-family: var(--sans);
+    font-size: .76rem;
+    font-weight: 500;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: .9rem;
+    border-radius: 2px;
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    transition: background .2s, color .2s, border-color .2s;
+  }
+  .plan-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .plan-card.featured .plan-btn {
+    background: var(--accent); color: var(--paper); border-color: var(--accent);
+  }
+  .plan-card.featured .plan-btn:hover { background: var(--accent-mid); border-color: var(--accent-mid); }
+  .plan-card.premium .plan-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .plans-disclaimer {
+    margin-top: 2rem;
+    font-family: var(--sans);
+    font-size: .7rem;
+    color: var(--stone);
+    letter-spacing: .06em;
+    line-height: 2;
+    border-top: 1px solid var(--rule);
+    padding-top: 1.5rem;
+  }
+
+  /* ── FLOW ── */
+  .flow { background: var(--light); }
+  .flow-steps { margin-top: 4rem; max-width: 50rem; }
+  .step {
+    display: grid;
+    grid-template-columns: 4.5rem 1fr;
+    gap: 2rem;
+    padding: 2.4rem 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: start;
+  }
+  .step:first-child { border-top: 1px solid var(--rule); }
+  .step-num {
+    font-family: var(--serif-en);
+    font-style: italic;
+    font-size: 2rem;
+    color: var(--accent);
+    line-height: 1;
+    padding-top: .3rem;
+  }
+  .step-title {
+    font-family: var(--serif-jp);
+    font-size: 1.05rem;
+    font-weight: 500;
+    letter-spacing: .04em;
+    margin-bottom: .5rem;
+  }
+  .step-body { font-size: .87rem; color: var(--stone); line-height: 2.1; }
+
+  /* ── CTA ── */
+  .cta-section {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 8rem 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-section::before {
+    content: 'Fundia';
+    font-family: var(--serif-en);
+    font-style: italic;
+    font-size: 16vw;
+    color: rgba(255,255,255,.025);
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .cta-section .section-label { color: #7aab8a; }
+  .cta-title {
+    font-family: var(--serif-jp);
+    font-size: clamp(1.8rem, 3.2vw, 2.8rem);
+    font-weight: 500;
+    line-height: 1.6;
+    letter-spacing: .04em;
+    margin: 1rem 0 1.5rem;
+    position: relative;
+  }
+  .cta-lead {
+    font-size: .92rem;
+    color: #706d68;
+    line-height: 2.1;
+    margin-bottom: 3rem;
+    position: relative;
+  }
+  .contact-form {
+    max-width: 480px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    text-align: left;
+  }
+  .form-row { margin-bottom: .9rem; }
+  .form-row input,
+  .form-row textarea,
+  .form-row select {
+    width: 100%;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    color: var(--paper);
+    font-family: var(--serif-jp);
+    font-size: .88rem;
+    padding: .9rem 1.1rem;
+    border-radius: 2px;
+    outline: none;
+    transition: border-color .2s;
+    appearance: none;
+  }
+  .form-row input::placeholder,
+  .form-row textarea::placeholder { color: rgba(255,255,255,.25); }
+  .form-row input:focus,
+  .form-row textarea:focus,
+  .form-row select:focus { border-color: var(--accent-mid); }
+  .form-row textarea { resize: vertical; min-height: 110px; }
+  .form-row select option { background: #1a1916; }
+  .btn-submit {
+    width: 100%;
+    background: var(--accent);
+    color: var(--paper);
+    border: none;
+    font-family: var(--sans);
+    font-size: .8rem;
+    font-weight: 500;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    padding: 1rem;
+    border-radius: 2px;
+    cursor: pointer;
+    margin-top: .4rem;
+    transition: background .2s, transform .2s;
+  }
+  .btn-submit:hover { background: var(--accent-mid); transform: translateY(-1px); }
+  .form-note {
+    font-family: var(--sans);
+    font-size: .66rem;
+    color: rgba(255,255,255,.25);
+    letter-spacing: .08em;
+    margin-top: 1rem;
+    text-align: center;
+    line-height: 1.8;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    border-top: 1px solid #252422;
+    padding: 2.8rem 6rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #4a4845;
+  }
+  .footer-logo {
+    font-family: var(--serif-en);
+    font-style: italic;
+    font-size: 1.1rem;
+    color: #9b9690;
+    text-decoration: none;
+  }
+  .footer-links {
+    list-style: none;
+    display: flex; gap: 2rem;
+  }
+  .footer-links a {
+    font-family: var(--sans);
+    font-size: .68rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #4a4845;
+    text-decoration: none;
+    transition: color .2s;
+  }
+  .footer-links a:hover { color: #9b9690; }
+  .footer-copy {
+    font-family: var(--sans);
+    font-size: .66rem;
+    letter-spacing: .08em;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 960px) {
+    nav { padding: 1.2rem 1.8rem; }
+    nav ul { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-left { padding: 3.5rem 1.8rem; }
+    .hero-left::after { display: none; }
+    .hero-right { display: none; }
+    section { padding: 4.5rem 1.8rem; }
+    .concept { grid-template-columns: 1fr; gap: 3rem; }
+    .concept-float { position: static; margin-top: 1.5rem; }
+    .features-grid,
+    .plans-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 1.5rem; text-align: center; padding: 2.5rem 1.8rem; }
+    .footer-links { flex-wrap: wrap; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#"><em>Fundia</em> Online</a>
+  <ul>
+    <li><a href="#concept">理念</a></li>
+    <li><a href="#features">特徴</a></li>
+    <li><a href="#plans">料金</a></li>
+    <li><a href="#flow">流れ</a></li>
+    <li><a href="#contact">お問い合わせ</a></li>
+  </ul>
+  <a class="nav-cta" href="#contact">無料相談</a>
+</nav>
+
+<!-- CAMPAIGN RIBBON -->
+<div class="campaign-ribbon">
+  <span>🎉 <strong>先着限定キャンペーン実施中</strong> — 今だけ授業料半額　詳細はお問い合わせください</span>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="eyebrow">個別指導 / 能力育成 / 視野拡大</p>
+    <h1 class="hero-title">
+      成長を実感できないなら、<br>それは授業ではない。
+      <em>学びは、変化を感じてこそ意味がある。</em>
+    </h1>
+    <p class="hero-sub">
+      Fundia Onlineは、お子さま一人ひとりの可能性を引き出すために設計された個別指導サービスです。知識の習得だけでなく、視野を広げ、考える力を育てます。
+    </p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="#contact">無料相談を申し込む</a>
+      <a class="btn-ghost" href="#plans">料金プランを見る</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-card">
+      <p class="card-label">Fundia Online — Our Philosophy</p>
+      <p class="card-quote">「できた」ではなく、<br>「わかった」を<br>積み重ねる指導。</p>
+      <div class="card-divider"></div>
+      <div class="card-pillars">
+        <div class="card-pillar">
+          <span class="pillar-dot"></span>
+          <span class="pillar-text">能力育成 — 思考力・表現力・判断力</span>
+        </div>
+        <div class="card-pillar">
+          <span class="pillar-dot"></span>
+          <span class="pillar-text">視野拡大 — 多角的な知識と好奇心</span>
+        </div>
+        <div class="card-pillar">
+          <span class="pillar-dot"></span>
+          <span class="pillar-text">個別最適 — 一人に一つの学習設計</span>
+        </div>
+        <div class="card-pillar">
+          <span class="pillar-dot"></span>
+          <span class="pillar-text">生徒専用AI — テクノロジーで加速する学び</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONCEPT -->
+<section class="concept" id="concept">
+  <div class="concept-visual reveal">
+    <div class="concept-block">
+      <span class="concept-block-title">Why Fundia?</span>
+      <p>多くの教育サービスは「教える」ことを目的としています。しかし私たちは、「変わる」ことを目的としています。お子さまが授業を通じて自分の変化を実感できるとき、学びは本物になると信じています。</p>
+    </div>
+
+  </div>
+  <div class="reveal">
+    <p class="section-label">Our Belief</p>
+    <h2 class="section-title">子どもの可能性は、<br>正しい環境で開花する。</h2>
+    <p class="section-lead">私たちが大切にしているのは、成績の数字ではなく、お子さまが「自分はできる」と感じる瞬間です。能力の育成と視野の拡大を通じて、どんな未来にも対応できる土台を一緒につくります。</p>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <p class="section-label reveal">What We Offer</p>
+  <h2 class="section-title reveal">Fundia Onlineの三つの軸</h2>
+  <p class="section-lead reveal">知識を「与える」のではなく、考える力を「育てる」ことを、すべての指導の中心に置いています。</p>
+  <div class="features-grid">
+    <div class="feature-card reveal">
+      <span class="feature-num">01</span>
+      <h3 class="feature-title">完全個別カリキュラム</h3>
+      <p class="feature-body">お子さまの現在地・目標・興味関心をもとに、世界にひとつだけの学習プランを設計。画一的な教材ではなく、その子のためだけに選ばれた素材で学びます。</p>
+    </div>
+    <div class="feature-card reveal">
+      <span class="feature-num">02</span>
+      <h3 class="feature-title">生徒専用AIの活用</h3>
+      <p class="feature-body">スタンダード・プレミアムプランでは、お子さま専用にカスタマイズされたAIを作成。学習の記録・弱点の分析・復習サポートをテクノロジーの力で実現します。</p>
+    </div>
+    <div class="feature-card reveal">
+      <span class="feature-num">03</span>
+      <h3 class="feature-title">視野を広げる対話型指導</h3>
+      <p class="feature-body">正解を教えるだけでなく、「なぜ？」「どうすれば？」を一緒に考える対話を重視。多様な視点を持ち、自分の頭で考える力を丁寧に育てます。</p>
+    </div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section class="plans" id="plans">
+  <p class="section-label reveal">Pricing</p>
+  <h2 class="section-title reveal">料金プラン</h2>
+  <p class="section-lead reveal">すべてのプランにお問い合わせからのご相談が含まれます。まずはお気軽にご連絡ください。</p>
+  <p class="plans-note reveal">※ 表示価格はすべて税別・月額の目安です。</p>
+  <div class="plans-grid">
+
+    <!-- Entry -->
+    <div class="plan-card reveal">
+      <p class="plan-name">エントリープラン</p>
+      <span class="plan-price-plain">¥40,000<small class="price-suffix">〜</small></span>
+      <p class="plan-price-note">/ 月（税別）</p>
+      <div class="plan-divider"></div>
+      <ul class="plan-features">
+        <li>月4回・週1時間の個別指導</li>
+        <li>オンライン対応</li>
+        <li>マンツーマン授業</li>
+        <li>毎回のフィードバックレポート</li>
+      </ul>
+      <a class="plan-btn" href="#contact">相談・申し込み</a>
+    </div>
+
+    <!-- Standard -->
+    <div class="plan-card featured reveal">
+      <div class="campaign-badge">
+        今だけ授業料半額
+        <span class="campaign-sub">先着限定キャンペーン適用中</span>
+      </div>
+      <p class="plan-name">スタンダードプラン</p>
+      <span class="price-original">¥450,000〜</span>
+      <span class="price-campaign">¥250,000<small class="price-suffix">〜</small></span>
+      <p class="plan-price-note">/ 月（税別）　授業料半額適用後</p>
+      <div class="plan-divider"></div>
+      <ul class="plan-features">
+        <li>月80回・週10時間の個別指導</li>
+        <li>オンライン対応</li>
+        <li>マンツーマン授業</li>
+        <li>生徒専用AIの作成・活用</li>
+        <li>毎回のフィードバックレポート</li>
+        <li>週次目標確認ミーティング</li>
+      </ul>
+      <a class="plan-btn" href="#contact">このプランに申し込む</a>
+    </div>
+
+    <!-- Premium -->
+    <div class="plan-card premium reveal">
+      <div class="campaign-badge">
+        今だけ授業料半額
+        <span class="campaign-sub">先着限定キャンペーン適用中</span>
+      </div>
+      <p class="plan-name">プレミアムプラン</p>
+      <span class="price-original">¥950,000〜</span>
+      <span class="price-campaign">¥450,000<small class="price-suffix">〜</small></span>
+      <p class="plan-price-note">/ 月（税別）　授業料半額適用後</p>
+      <div class="plan-divider"></div>
+      <ul class="plan-features">
+        <li>月80回・週10時間の個別指導</li>
+        <li>実地（対面）対応</li>
+        <li>マンツーマン授業</li>
+        <li>生徒専用AIの作成・活用</li>
+        <li>毎回のフィードバックレポート</li>
+        <li>週次目標確認ミーティング</li>
+        <li>チャットによる随時質問対応</li>
+      </ul>
+      <a class="plan-btn" href="#contact">このプランに申し込む</a>
+    </div>
+
+  </div>
+  <p class="plans-disclaimer reveal">
+    ※ 先着限定キャンペーンの詳細（対象人数・期間）はお問い合わせにてご案内しております。<br>
+    ※ キャンペーン割引は授業料部分のみに適用されます。生徒専用AI作成費は割引対象外です。<br>
+    ※ 各プランの詳細・ご不明点はお気軽にお問い合わせください。
+  </p>
+</section>
+
+<!-- FLOW -->
+<section class="flow" id="flow">
+  <p class="section-label reveal">How to Start</p>
+  <h2 class="section-title reveal">はじめるまでの流れ</h2>
+  <p class="section-lead reveal">お問い合わせから最短3日で授業を開始できます。</p>
+  <div class="flow-steps">
+    <div class="step reveal">
+      <span class="step-num">01</span>
+      <div>
+        <h3 class="step-title">お問い合わせ</h3>
+        <p class="step-body">フォームよりお子さまの現状・目標・ご希望をお聞かせください。内容を確認の上、担当より2営業日以内にご連絡いたします。</p>
+      </div>
+    </div>
+    <div class="step reveal">
+      <span class="step-num">02</span>
+      <div>
+        <h3 class="step-title">ヒアリング・プランのご案内</h3>
+        <p class="step-body">お子さまの特性・目標・ご予算をもとに、最適なプランをご提案します。ご不明な点はこの場でお気軽にご相談ください。</p>
+      </div>
+    </div>
+    <div class="step reveal">
+      <span class="step-num">03</span>
+      <div>
+        <h3 class="step-title">学習プランの設計</h3>
+        <p class="step-body">お子さまの現在地とゴールをもとに、専用の学習カリキュラムを設計します。スタンダード・プレミアムプランでは生徒専用AIも同時に準備します。</p>
+      </div>
+    </div>
+    <div class="step reveal">
+      <span class="step-num">04</span>
+      <div>
+        <h3 class="step-title">授業スタート</h3>
+        <p class="step-body">いよいよ授業が始まります。毎回のフィードバックと定期的な目標確認を通じて、着実に成長を積み重ねていきます。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA / CONTACT -->
+<section class="cta-section" id="contact">
+  <p class="section-label">Contact</p>
+  <h2 class="cta-title">お子さまの学びを、<br>一緒に考えさせてください。</h2>
+  <p class="cta-lead">プランのご相談・先着キャンペーンの詳細など、<br>どんな小さなことでもお気軽にお問い合わせください。</p>
+  <div class="contact-form">
+
+    <!-- 送信完了メッセージ（初期非表示） -->
+    <div id="form-success" style="display:none; text-align:center; padding:2rem 0;">
+      <p style="font-family:var(--serif-jp); font-size:1.05rem; color:#7aab8a; margin-bottom:.8rem;">送信が完了しました。</p>
+      <p style="font-family:var(--sans); font-size:.78rem; color:#706d68; letter-spacing:.08em;">2営業日以内にご連絡いたします。</p>
+    </div>
+
+    <!-- エラーメッセージ（初期非表示） -->
+    <div id="form-error" style="display:none; text-align:center; padding:1rem 0; margin-bottom:1rem;">
+      <p style="font-family:var(--sans); font-size:.78rem; color:#c0392b; letter-spacing:.08em;"></p>
+    </div>
+
+    <div id="form-body">
+      <div class="form-row">
+        <!-- name属性を明示してバリデーション対象にする -->
+        <input type="text" id="f-name" name="name" placeholder="保護者のお名前" maxlength="50" autocomplete="name">
+      </div>
+      <div class="form-row">
+        <input type="email" id="f-email" name="email" placeholder="メールアドレス" maxlength="254" autocomplete="email">
+      </div>
+      <div class="form-row">
+        <input type="tel" id="f-tel" name="tel" placeholder="電話番号（任意）" maxlength="20" autocomplete="tel">
+      </div>
+      <div class="form-row">
+        <select id="f-plan" name="plan">
+          <option value="" disabled selected>ご興味のあるプラン</option>
+          <option>エントリープラン（月4回・週1時間）</option>
+          <option>スタンダードプラン（月80回・週10時間 / オンライン）</option>
+          <option>プレミアムプラン（月80回・週10時間 / 実地）</option>
+          <option>まだ決まっていない・相談したい</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <select id="f-inquiry" name="inquiry">
+          <option value="" disabled selected>お問い合わせ内容</option>
+          <option>プラン・料金について</option>
+          <option>先着キャンペーンの詳細を聞きたい</option>
+          <option>資料請求</option>
+          <option>その他</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <textarea id="f-message" name="message" placeholder="お子さまの学年・目標・ご質問など、自由にお書きください。" maxlength="1000"></textarea>
+      </div>
+
+      <!--
+        【honeypotフィールド】
+        スパムボットは隠しフィールドにも値を入れてしまう。
+        人間には見えないのでここに値が入っていれば自動送信と判断して拒否する。
+      -->
+      <div style="position:absolute; left:-9999px; top:-9999px;" aria-hidden="true">
+        <input type="text" id="f-hp" name="website" tabindex="-1" autocomplete="off">
+      </div>
+
+      <button class="btn-submit" id="submit-btn" type="button">送信する</button>
+      <p class="form-note">送信後、2営業日以内にご連絡いたします。<br>個人情報は適切に管理し、第三者への提供は行いません。</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a class="footer-logo" href="#">Fundia Online</a>
+  <ul class="footer-links">
+    <li><a href="#concept">理念</a></li>
+    <li><a href="#features">特徴</a></li>
+    <li><a href="#plans">料金</a></li>
+    <li><a href="#flow">流れ</a></li>
+    <li><a href="#">プライバシーポリシー</a></li>
+    <li><a href="#">特定商取引法に基づく表記</a></li>
+  </ul>
+  <p class="footer-copy">© 2025 Fundia Online. All rights reserved.</p>
+</footer>
+
+<script>
+  /* ============================================================
+     スクロールリビール
+  ============================================================ */
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 70);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => io.observe(el));
+
+  /* ============================================================
+     セキュリティ設定
+  ============================================================ */
+
+  /*
+    【固定トークン】
+    GAS側でこのトークンが一致するリクエストのみ処理する。
+    完全な認証ではないが、無差別なスパムAPIアクセスを減らす補助的対策。
+    ※ GAS側のコードにも同じ値を設定すること。
+  */
+  const STATIC_TOKEN = 'FUNDIA_TOKEN_2025';
+
+  /*
+    【送信間隔制限】
+    同一セッション内で5秒以内の連続送信を禁止する。
+    ボットによる高速連続送信を防ぐ最低限の対策。
+  */
+  let lastSubmitTime = 0;
+  const SUBMIT_INTERVAL_MS = 5000;
+
+  /*
+    【GAS エンドポイントURL】
+    GASをデプロイした後、発行されたURLをここに貼り付ける。
+    例: 'https://script.google.com/macros/s/XXXXXX/exec'
+  */
+  const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwpjf0NRFreEbcEpL2GfvlD-FEMK8IMXafc1oPv9TMXv0-7ZLUoFwMBJRIbhMn2EKrB6g/exec';
+
+  /* ============================================================
+     入力値サニタイズ
+     【XSS対策】innerHTML を使わず、危険文字を除去する。
+     スクリプトタグや特殊文字の混入を防ぐ。
+  ============================================================ */
+  function sanitize(str) {
+    return str
+      .replace(/</g, '')
+      .replace(/>/g, '')
+      .replace(/&/g, '')
+      .replace(/"/g, '')
+      .replace(/'/g, '')
+      .trim();
+  }
+
+  /* ============================================================
+     メールアドレス形式チェック
+  ============================================================ */
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  /* ============================================================
+     エラー表示（textContent使用 / innerHTML禁止）
+     【XSS対策】textContentを使うことでHTMLインジェクションを防ぐ。
+  ============================================================ */
+  function showError(msg) {
+    const el = document.getElementById('form-error');
+    el.querySelector('p').textContent = msg; // ← innerHTML は使わない
+    el.style.display = 'block';
+  }
+  function hideError() {
+    document.getElementById('form-error').style.display = 'none';
+  }
+
+  /* ============================================================
+     フォーム送信処理
+  ============================================================ */
+  document.getElementById('submit-btn').addEventListener('click', async () => {
+    hideError();
+
+    /* --- honeypotチェック ---
+       hiddenフィールドに値が入っていればボットと判断して即拒否。
+       人間はこのフィールドを見ることも触ることもできない。
+    */
+    const hp = document.getElementById('f-hp').value;
+    if (hp) return; // ボットの場合は静かに無視する
+
+    /* --- 連続送信防止 ---
+       前回送信から5秒以内なら送信不可。
+    */
+    const now = Date.now();
+    if (now - lastSubmitTime < SUBMIT_INTERVAL_MS) {
+      showError('送信間隔が短すぎます。しばらくしてから再度お試しください。');
+      return;
+    }
+
+    /* --- 入力値取得 & サニタイズ --- */
+    const name     = sanitize(document.getElementById('f-name').value);
+    const email    = sanitize(document.getElementById('f-email').value);
+    const tel      = sanitize(document.getElementById('f-tel').value);
+    const plan     = sanitize(document.getElementById('f-plan').value);
+    const inquiry  = sanitize(document.getElementById('f-inquiry').value);
+    const message  = sanitize(document.getElementById('f-message').value);
+
+    /* --- クライアント側バリデーション --- */
+    if (!name)               { showError('お名前を入力してください。'); return; }
+    if (name.length > 50)    { showError('お名前は50文字以内で入力してください。'); return; }
+    if (!email)              { showError('メールアドレスを入力してください。'); return; }
+    if (!isValidEmail(email)){ showError('メールアドレスの形式が正しくありません。'); return; }
+    if (!plan)               { showError('ご興味のあるプランを選択してください。'); return; }
+    if (!inquiry)            { showError('お問い合わせ内容を選択してください。'); return; }
+    if (message.length > 1000) { showError('メッセージは1000文字以内で入力してください。'); return; }
+
+    /* --- 送信ボタンを無効化（二重送信防止） --- */
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = '送信中...';
+
+    /* --- GASへPOST送信 ---
+       【通信仕様】
+       - メソッド: POST のみ使用（GETはURLにデータが露出するため禁止）
+       - Content-Type: application/json
+       - tokenを含めてGAS側で検証できるようにする
+       - originを送信してGAS側でリクエスト元を確認できるようにする
+    */
+    try {
+      const payload = {
+        token:   STATIC_TOKEN,
+        origin:  window.location.origin,
+        name,
+        email,
+        tel,
+        plan,
+        inquiry,
+        message,
+        timestamp: new Date().toISOString()
+      };
+
+      const res = await fetch(GAS_ENDPOINT, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error('Network error');
+
+      /* --- 送信成功 --- */
+      lastSubmitTime = Date.now();
+      document.getElementById('form-body').style.display = 'none';
+      document.getElementById('form-success').style.display = 'block';
+
+    } catch (err) {
+      showError('送信に失敗しました。時間をおいて再度お試しください。');
+      btn.disabled = false;
+      btn.textContent = '送信する';
+    }
+  });
+</script>
+</body>
+</html>
